@@ -31,12 +31,21 @@ def get_gpt2_small(device="cuda") -> HookedTransformer:
         tl_model.set_use_hook_mlp_in(True)
     return tl_model
 
+def get_pythia_70m(device="cuda") -> HookedTransformer:
+    tl_model = HookedTransformer.from_pretrained("EleutherAI/pythia-70m-deduped")
+    tl_model = tl_model.to(device)
+    tl_model.set_use_attn_result(True)
+    tl_model.set_use_split_qkv_input(True)
+    if "use_hook_mlp_in" in tl_model.cfg.to_dict():
+        tl_model.set_use_hook_mlp_in(True)
+    return tl_model
+
 def get_ioi_gpt2_small(device="cuda"):
     """For backwards compat"""
     return get_gpt2_small(device=device)
 
 def get_all_ioi_things(num_examples, device, metric_name, kl_return_one_element=True):
-    tl_model = get_gpt2_small(device=device)
+    tl_model = get_pythia_70m(device=device)
     ioi_dataset = IOIDataset(
         prompt_type="ABBA",
         N=num_examples*2,
