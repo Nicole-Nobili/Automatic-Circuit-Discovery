@@ -58,6 +58,15 @@ def get_all_ioi_things(num_examples, device, metric_name, kl_return_one_element=
         .gen_flipped_prompts(("S", "RAND"), seed=2)
         .gen_flipped_prompts(("S1", "RAND"), seed=3)
     )
+    
+    print(ioi_dataset.ioi_prompts[0]['text'])
+    # Print tokenized text alongside tokens for the first prompt
+    tokens = tl_model.to_tokens(ioi_dataset.ioi_prompts[0]['text'])
+    decoded_tokens = [tl_model.to_string(token) for token in tokens[0]]
+    
+    print("Tokenized text with corresponding tokens:")
+    for i, (token, decoded) in enumerate(zip(tokens[0], decoded_tokens)):
+        print(f"Token {i}: {token} - '{decoded}'")
 
     seq_len = ioi_dataset.toks.shape[1]
     assert seq_len == 16, f"Well, I thought ABBA #1 was 16 not {seq_len} tokens long..."
@@ -66,7 +75,21 @@ def get_all_ioi_things(num_examples, device, metric_name, kl_return_one_element=
     patch_data = abc_dataset.toks.long()[:num_examples*2, : seq_len - 1].to(device)
     labels = ioi_dataset.toks.long()[:num_examples*2, seq_len-1]
     wrong_labels = torch.as_tensor(ioi_dataset.s_tokenIDs[:num_examples*2], dtype=torch.long, device=device)
-
+    print(default_data[0])
+    
+    labels_tensor = torch.as_tensor(ioi_dataset.io_tokenIDs, dtype=torch.long)
+    if not torch.equal(labels, labels_tensor):
+        mismatch_indices = (labels != labels_tensor).nonzero().squeeze()
+        for idx in mismatch_indices:
+            tokens = tl_model.to_tokens(ioi_dataset.ioi_prompts[idx]['text'])
+            decoded_tokens = [tl_model.to_string(token) for token in tokens[0]]
+            print(f"\nMismatch at index {idx}:")
+            print("Tokenized text with corresponding tokens:")
+            for i, (token, decoded) in enumerate(zip(tokens[0], decoded_tokens)):
+                print(f"Token {i}: {token} - '{decoded}'")
+            print(f"labels[{idx}]: {labels[idx]}")
+                
+                
     assert torch.equal(labels, torch.as_tensor(ioi_dataset.io_tokenIDs, dtype=torch.long))
     labels = labels.to(device)
 
