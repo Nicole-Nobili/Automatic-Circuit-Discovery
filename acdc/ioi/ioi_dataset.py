@@ -751,7 +751,7 @@ class IOIDataset:
             raise ValueError(prompt_type)
 
         if tokenizer is None:
-            self.tokenizer = AutoTokenizer.from_pretrained("gpt2")
+            self.tokenizer = AutoTokenizer.from_pretrained("EleutherAI/pythia-70m-deduped")
             self.tokenizer.pad_token = self.tokenizer.eos_token
         else:
             self.tokenizer = tokenizer
