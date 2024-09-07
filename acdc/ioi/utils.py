@@ -77,6 +77,7 @@ def get_all_ioi_things(num_examples, device, metric_name, kl_return_one_element=
     wrong_labels = torch.as_tensor(ioi_dataset.s_tokenIDs[:num_examples*2], dtype=torch.long, device=device)
     print(default_data[0])
     
+    """
     labels_tensor = torch.as_tensor(ioi_dataset.io_tokenIDs, dtype=torch.long)
     if not torch.equal(labels, labels_tensor):
         mismatch_indices = (labels != labels_tensor).nonzero().squeeze()
@@ -88,7 +89,7 @@ def get_all_ioi_things(num_examples, device, metric_name, kl_return_one_element=
             for i, (token, decoded) in enumerate(zip(tokens[0], decoded_tokens)):
                 print(f"Token {i}: {token} - '{decoded}'")
             print(f"labels[{idx}]: {labels[idx]}")
-                
+    """
                 
     assert torch.equal(labels, torch.as_tensor(ioi_dataset.io_tokenIDs, dtype=torch.long))
     labels = labels.to(device)
