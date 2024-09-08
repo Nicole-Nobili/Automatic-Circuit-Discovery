@@ -610,7 +610,8 @@ class TLACDCExperiment:
 
                 if self.verbose:
                     print("Result is", result, end="")
-
+                
+                print("ABS VALUE THRESHOLD:", self.abs_value_threshold)
                 if self.abs_value_threshold:
                     result = abs(result)
 
